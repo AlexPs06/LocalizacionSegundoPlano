@@ -109,17 +109,16 @@ export class HomePage implements OnInit {
   }
   tomarSegundoPlano(){
     this.tomandoRuta = true;
-
     this.postionSubscription = this.geolocalizacion.watchPosition()
     .subscribe(data => {
       setTimeout(() =>{
         console.log(data)
-
         this.rutaSeguir.push(
           {
             lat: data.coords.latitude,
             lng: data.coords.longitude
           });
+
           this.dibujarRuta(this.rutaSeguir);
       },5000);
     })
@@ -179,51 +178,7 @@ export class HomePage implements OnInit {
     this.postionSubscription.unsubscribe();
     
   }
-  // getPosition(){
-  //   this.geolocalizacion.getCurrentPosition(). then(response=>{
-  //     console.log(response);
-  //     console.log("entre a get position ");
-  //     this.latiude=response.coords.latitude;
-  //     this.longitude=response.coords.longitude;
-  //     this.getMap();
-  //   })
-    
-  // }
 
-  // getMap(){
-  //   let mapOption:GoogleMapOptions={
-  //       controls: {
-  //       'compass': true,
-  //       'myLocationButton': true,
-  //       'indoorPicker': true
-  //       },
-  //       camera: {
-  //         target: {
-  //           lat: this.latiude,
-  //           lng: this.longitude
-  //         },
-          
-  //         zoom: 18,
-  //         tilt: 30
-  //       }
-  //     };
-  //     this.map=GoogleMaps.create('mapa',mapOption);
-  //     let marker: Marker = this.map.addMarkerSync({
-  //       title: 'Ionic',
-  //       icon: 'blue',
-  //       animation: 'DROP',
-  //       position: {
-  //         lat: this.latiude,
-  //         lng: this.longitude
-  //       }
-  //     });
-
-  //     marker.on(GoogleMapsEvent.MARKER_CLICK).subscribe(() => {
-  //       alert('clicked');
-  //     });
-    
-
-  //   }
 
 }
 export const snapshotToArray=snapshot=>{
