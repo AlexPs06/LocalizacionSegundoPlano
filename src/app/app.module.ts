@@ -9,6 +9,9 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
+
+import { ModalPage } from './components/modal/modal.page';
+
 var config = {
   apiKey: "AIzaSyDOsAWRaZf9s1MJtNJx7YXg-0Hv4AI38Dw",
   authDomain: "seguimiento-74dde.firebaseapp.com",
@@ -19,8 +22,10 @@ var config = {
 };
 
 @NgModule({
-  declarations: [AppComponent],
-  entryComponents: [],
+  declarations: [AppComponent, ModalPage],
+  entryComponents: [
+    ModalPage
+  ],
   imports: [
     //AngularFireModule.initializeApp(config),
     //AngularFirestoreModule,
