@@ -11,12 +11,14 @@ import {
   Marker,
   Environment
 } from '@ionic-native/google-maps';
+
 import { from, Subscription } from 'rxjs';
-import { ToastController, Platform } from '@ionic/angular';
+import { ToastController, ModalController, Platform } from '@ionic/angular';
 import * as firebase from 'firebase';
 import { BackgroundMode } from '@ionic-native/background-mode/ngx';
-declare var google;
+import { ModalPage } from '../components/modal/modal.page'
 
+declare var google;
 
 
 @Component({
@@ -32,9 +34,9 @@ export class HomePage implements OnInit {
   tomandoRuta=false;
   mapaActual=null;
   rutasAntiguas:any=[]
-
+  startPressed = false
   
-   //key= AIzaSyDvnrn4179xHiXqCU_8c_ot4VeIJEcrNJ8
+  //key= AIzaSyDvnrn4179xHiXqCU_8c_ot4VeIJEcrNJ8
   postionSubscription: Subscription;
   constructor(
     private geolocalizacion:Geolocation,
@@ -42,14 +44,14 @@ export class HomePage implements OnInit {
     public toastController: ToastController,
     private backgroundMode: BackgroundMode,
     private plt: Platform,
-
+    private modalController: ModalController
   ){
     
 
     this.ref.on('value',response=>{
       let datos=snapshotToArray(response)
         console.log("Datos ",datos);
-      
+        this.rutasAntiguas = datos
     });
 
     let connectSubscription = this.network.onConnect().subscribe(() => {
@@ -109,6 +111,7 @@ export class HomePage implements OnInit {
   }
   tomarSegundoPlano(){
     this.tomandoRuta = true;
+    firebase.database().ref("ruta").remove();
     this.postionSubscription = this.geolocalizacion.watchPosition()
     .subscribe(data => {
       setTimeout(() =>{
@@ -118,13 +121,14 @@ export class HomePage implements OnInit {
             lat: data.coords.latitude,
             lng: data.coords.longitude
           });
-
+          firebase.database().ref("ruta").update(this.rutaSeguir)
           this.dibujarRuta(this.rutaSeguir);
-      },5000);
+      },30000);
     })
   }
   iniciarRecorridoPosicion(){
     this.tomandoRuta = true;
+    this.startPressed = true;
     this.rutaSeguir =[];
 
     this.postionSubscription = this.geolocalizacion.watchPosition()
@@ -167,9 +171,13 @@ export class HomePage implements OnInit {
   }
 
   detenerRecorrido(){
+
+    this.startPressed = false;
+
     let newRoute = {
       finished: new Date().getTime(),
       ruta: this.rutaSeguir
+
     };
     
     this.ref.push(newRoute);
@@ -179,15 +187,26 @@ export class HomePage implements OnInit {
     
   }
 
+  async showHistoryRoute(router){
+    console.log('Ruta: ')
+    const modal = await this.modalController.create({
+      component: ModalPage,
+      componentProps: { 'routers': router }
+    });
+    return await modal.present();
+  }
+
 
 }
 export const snapshotToArray=snapshot=>{
   console.log("snapshot: ",snapshot);
   let returnArr =[]
+  let counter = 0
   snapshot.forEach(childSnapshot => {
     let item=childSnapshot.val();
     item.key=childSnapshot.key;
-    returnArr.push(item);
+    returnArr.push({ 'item': item, 'id': counter });
+    counter += 1
   });
   return returnArr;
 

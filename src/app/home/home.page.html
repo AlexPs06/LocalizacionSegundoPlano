@@ -7,14 +7,23 @@
 </ion-header>
 
 <ion-content padding>
-  163195.
-  <p>Luis Alejandro Pérez Sarmiento</p>
-    <ion-button (click)="iniciarRecorrido()" >iniciar</ion-button>  
-    <ion-button (click)="detenerRecorrido()" >detener</ion-button>
+    <ion-button style="width: 100%; background-color:  green!important" (click)="iniciarRecorrido()" *ngIf="!startPressed">iniciar</ion-button>  
+    <ion-button style="width: 100%; background-color: red!important" (click)="detenerRecorrido()" *ngIf="startPressed">detener</ion-button>
+    <br>
   <div #mapa id="mapa"  class="dimensiones"></div>
   <!-- <div id="mapa" name="mapa" class="dimenciones"> </div>-->
-
-
-  
+  <ion-list>
+    <ion-list-header><h1>Previous Tracks</h1></ion-list-header>
+    <ion-item *ngFor="let route of rutasAntiguas" style="margin-bottom: 5px; margin-top: 20px">
+      <div id="circle" style="display:flex">
+        <p style="margin: auto">{{ route.id }}</p>
+      </div>
+      <div style="display: block; margin-left: 20px">
+        <span>Fecha: {{ route.item.finished | date }} </span>
+        <button ion-button clear item-end (click)="showHistoryRoute(route.item.ruta)">View Route</button>
+      </div>
+    </ion-item>
+    <br>
+  </ion-list>  
 
 </ion-content>
